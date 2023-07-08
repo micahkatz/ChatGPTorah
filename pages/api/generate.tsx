@@ -1,10 +1,39 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Configuration, OpenAIApi } from "openai";
-
+import { convert as convertHtml } from 'html-to-text'
+import cheerio from 'cheerio'
+import axios from "axios";
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+interface SefariaCalendarResponse {
+  date: Date;
+  timezone: string;
+  calendar_items: CalendarItem[];
+}
+
+interface CalendarItem {
+  title: Description;
+  displayValue: Description;
+  url: string;
+  ref?: string;
+  heRef?: string;
+  order: number;
+  category: string;
+  extraDetails?: ExtraDetails;
+  description?: Description;
+}
+
+interface Description {
+  en: string;
+  he: string;
+}
+
+interface ExtraDetails {
+  aliyot: string[];
+}
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   if (!configuration.apiKey) {
@@ -27,12 +56,23 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const completion = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: generatePrompt(animal),
+
+    const articleHTML = await (await fetch(animal)).text()
+    const $ = cheerio.load(articleHTML);
+    const articleText = convertHtml($('article').html())
+
+    const { data: sefariaResponse }: { data: SefariaCalendarResponse } = await axios.get('http://www.sefaria.org/api/calendars')
+    const torahPortion = sefariaResponse['calendar_items'][0].displayValue.en
+    console.log({ torahPortion })
+    const completion = await openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: generatePrompt({ articleText, torahPortion }) }],
       temperature: 0.6,
     });
-    res.status(200).json({ result: completion.data.choices[0].text });
+    const result = completion.data.choices[0].message
+
+    console.log({ result })
+    res.status(200).json({ result: result.content });
   } catch (error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
@@ -49,8 +89,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-function generatePrompt(articleText: string) {
+function generatePrompt({ torahPortion, articleText }: { torahPortion: string, articleText: string }) {
 
   return `Act as a talmudic scholar. Explain this article in the context of the talmud.
-Here is the article: ${articleText}`
+  Relate this to the current torah portion as well. The current torah portion is ${torahPortion}
+Here is the article: ${articleText}`.substring(0, 4096)
 }

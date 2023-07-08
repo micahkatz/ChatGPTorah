@@ -4,7 +4,7 @@ import styles from "./index.module.css";
 
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
-  const [result, setResult] = useState();
+  const [result, setResult] = useState<string>();
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -50,7 +50,11 @@ export default function Home() {
           />
           <input type="submit" value="Generate Talmudic Interpretation" />
         </form>
-        <div className={styles.result}>{result}</div>
+        <div className={styles.result}>{result && result?.split('\n').map(text => (
+          <p>
+            {text}
+          </p>
+        ))}</div>
       </main>
     </div>
   );

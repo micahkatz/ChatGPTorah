@@ -25,6 +25,8 @@
   flex-direction: column;
   align-items: center;
   padding-top: 60px;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 .main .icon {
   width: 34px;
@@ -62,6 +64,7 @@
   cursor: pointer;
 }
 .main .result {
-  font-weight: bold;
+  /* font-weight: bold; */
   margin-top: 40px;
+  max-width: 75rem
 }
