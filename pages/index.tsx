@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
-
+import RssFeed from "../components/RssFeed";
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState<string>();
@@ -39,22 +39,26 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h3>ChatGPTorah</h3>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="animal"
-            placeholder="Give a link to an article"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
-          />
-          <input type="submit" value="Generate Talmudic Interpretation" />
-        </form>
-        <div className={styles.result}>{result && result?.split('\n').map(text => (
-          <p>
-            {text}
-          </p>
-        ))}</div>
+        <h1 className='text-2xl font-bold'>ChatGPTorah</h1>
+        <span className='mb-4'>Select an article</span>
+        <div className='max-w-5xl'>
+          <RssFeed feedUrl="https://jewishunpacked.com/feed/" queryKey="jewishunpacked" />
+          <form onSubmit={onSubmit}>
+            <input
+              type="text"
+              name="animal"
+              placeholder="Give a link to an article"
+              value={animalInput}
+              onChange={(e) => setAnimalInput(e.target.value)}
+            />
+            <input type="submit" value="Generate Talmudic Interpretation" />
+          </form>
+          <div className={styles.result}>{result && result?.split('\n').map(text => (
+            <p>
+              {text}
+            </p>
+          ))}</div>
+        </div>
       </main>
     </div>
   );
