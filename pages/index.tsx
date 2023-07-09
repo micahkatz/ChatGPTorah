@@ -41,7 +41,7 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className='text-2xl font-bold'>ChatGPTorah</h1>
         <span className='mb-4'>Select an article</span>
-        <div className='max-w-5xl'>
+        <div className='max-w-5xl flex flex-col items-center'>
           <RssFeed feedUrl="https://jewishunpacked.com/feed/" queryKey="jewishunpacked" />
           <form onSubmit={onSubmit}>
             <input

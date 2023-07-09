@@ -24,6 +24,8 @@ const RssFeed = (props: Props) => {
         error: feedError,
     } = useQuery({ queryKey: [props.queryKey], queryFn: fetchArticlesRssFeed });
 
+    const [page, setPage] = React.useState(0)
+
     async function fetchArticlesRssFeed() {
         const rssFeed = await parser.parseURL(
             `/api/articles/?rssUrl=${encodeURIComponent(props.feedUrl)}`
@@ -55,13 +57,16 @@ const RssFeed = (props: Props) => {
         );
     };
 
+    const loadMoreArticles = () => setPage(prevPage => prevPage + 1);
+    const PAGE_COUNT = 4
+
     return (
-        <section className='mb-2'>
-            <h3 className='text-xl mb-4'>
+        <section className='mb-4 flex flex-col items-center'>
+            <h3 className='text-xl mb-4 self-start'>
                 Articles From <Link href='https://jewishunpacked.com/' className='text-blue-500 hover:text-blue-800'>JewishUnpacked</Link>
             </h3>
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                {articleRssFeed?.items.map((item) => (
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4'>
+                {articleRssFeed?.items.slice(0, (page * PAGE_COUNT + PAGE_COUNT)).map((item) => (
                     <div className='flex gap-4 items-center'>
                         {/* <div className='rssFeedItem' dangerouslySetInnerHTML={{ __html: item.content }} /> */}
                         {renderArticleImg(item.content)}
@@ -78,7 +83,10 @@ const RssFeed = (props: Props) => {
                     </div>
                 ))}
             </div>
-            <button className='un'></button>
+            <button
+                onClick={loadMoreArticles}
+                disabled={(page * PAGE_COUNT + PAGE_COUNT) >= articleRssFeed?.items.length}
+                className='bg-purple-400 px-4 py-2 rounded-md text-white mb-2 hover:bg-purple-600 disabled:hidden'>Load More</button>
         </section>
     );
 };
