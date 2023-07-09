@@ -45,7 +45,7 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className='text-2xl font-bold'>ChatGPTorah</h1>
         <span className='mb-4'>Select an article</span>
-        <div className='max-w-5xl flex flex-col items-center'>
+        <div className='max-w-5xl flex flex-col items-center pb-6'>
           <RssFeed setArticleUrl={setRssArticleUrl} feedUrl="https://jewishunpacked.com/feed/" queryKey="jewishunpacked" />
           <div className={`${rssArticleUrl ? 'hidden' : ''} flex flex-col items-center`}>
             <Input
@@ -66,9 +66,15 @@ export default function Home() {
               className="min-w-[20rem] border-solid border-2 border-purple-400 rounded-md px-2 py-1 mb-2"
             />
           </div>
-          <Button
-            onClick={onSubmit}
-            className='mb-2'>Generate Talmudic Interpretation</Button>
+          <div className='fixed bottom-0 w-screen p-4 bg-white flex justify-center'>
+            <div className='relative'>
+              <div className="w-full h-full bg-white absolute -z-50" />
+              <Button
+                onClick={onSubmit}
+                disabled={!customArticleUrl && !rssArticleUrl && !articleText}
+                className='disabled:opacity-50 disabled:cursor-not-allowed'>Generate Talmudic Interpretation</Button>
+            </div>
+          </div>
 
           <div className={styles.result}>{result && result?.split('\n').map(text => (
             <p>

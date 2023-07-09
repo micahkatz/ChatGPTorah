@@ -75,7 +75,7 @@ const RssFeed = (props: Props) => {
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4'>
                 {articleRssFeed?.items.slice(0, (page * PAGE_COUNT + PAGE_COUNT)).map((item) => (
                     <button
-                        className={`flex gap-4 items-center hover:scale-105 transition-all hover:bg-purple-200 hover:p-2 hover:rounded-md ${(selectedArticle === item.link) ? 'border-purple-500 bg-purple-200 border-solid border-4 p-2 rounded-md' : ''}`}
+                        className={`flex gap-4 items-center hover:scale-105 transition-all hover:bg-purple-100 hover:p-2 hover:rounded-md ${(selectedArticle === item.link) ? 'border-purple-500 bg-purple-200 border-solid border-4 p-2 rounded-md' : ''}`}
                         key={`${item.guid}`}
                         onClick={() => (selectedArticle === item.link) ? setSelectedArticle(undefined) : setSelectedArticle(item.link)}
                     >
@@ -97,7 +97,7 @@ const RssFeed = (props: Props) => {
             <Button
                 onClick={loadMoreArticles}
                 disabled={(page * PAGE_COUNT + PAGE_COUNT) >= articleRssFeed?.items.length}
-                className='mb-2 bg-purple-100 hover:bg-purple-200 text-purple-500'>Load More</Button>
+                className='mb-2 bg-purple-100 hover:bg-purple-200 text-purple-500 disabled:hidden'>Load More</Button>
         </section>
     );
 };
