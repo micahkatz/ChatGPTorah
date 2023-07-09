@@ -6,8 +6,10 @@ import Button from '../components/Button';
 import Input from '../components/Input';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import axios, { AxiosResponse } from 'axios';
+import Parser from 'rss-parser';
+import RssItem from '../components/RssItem';
 export default function Home() {
-  const [rssArticleUrl, setRssArticleUrl] = useState('');
+  const [rssArticle, setRssArticle] = useState<Parser.Item>();
   const [customArticleUrl, setCustomArticleUrl] = useState('');
   const [articleText, setArticleText] = useState('');
 
@@ -21,7 +23,7 @@ export default function Home() {
     AxiosResponse<GenerateResponse>
   > {
     return axios.post('/api/generate', {
-      articleUrl: customArticleUrl || rssArticleUrl,
+      articleUrl: customArticleUrl || rssArticle?.link,
       articleText, // data: JSON.stringify({ articleUrl: customArticleUrl || rssArticleUrl, articleText }),
     });
   }
@@ -40,7 +42,7 @@ export default function Home() {
         )}
         <div className='max-w-5xl flex flex-col items-center pb-12'>
           {generateInterpretationMutation.isLoading && (
-            <p>Loading...</p>
+            <div className="custom-loader mt-4"></div>
           )}
           {generateInterpretationMutation.isError && (
             <>
@@ -64,23 +66,32 @@ export default function Home() {
           {generateInterpretationMutation.isSuccess &&
             resultData.data.result && (
               <div className='mt-10 max-w-xl'>
-                {resultData.data.result
-                  .split('\n')
-                  .map((text) => (
-                    <p className='mb-4'>{text}</p>
-                  ))}
+                {rssArticle && (
+                  <RssItem
+                    item={rssArticle}
+                    notInteractive
+                  />
+                )}
+                <div className='mt-8'>
+
+                  {resultData.data.result
+                    .split('\n')
+                    .map((text) => (
+                      <p className='mb-4'>{text}</p>
+                    ))}
+                </div>
 
               </div>
             )}
           {generateInterpretationMutation.isIdle && (
             <>
               <RssFeed
-                setArticleUrl={setRssArticleUrl}
+                setRssArticle={setRssArticle}
                 feedUrl='https://jewishunpacked.com/feed/'
                 queryKey='jewishunpacked'
               />
               <div
-                className={`${rssArticleUrl ? 'hidden' : ''
+                className={`${rssArticle ? 'hidden' : ''
                   } flex flex-col items-center`}
               >
                 <Input
@@ -119,7 +130,7 @@ export default function Home() {
                   }
                   disabled={
                     !customArticleUrl &&
-                    !rssArticleUrl &&
+                    !rssArticle &&
                     !articleText
                   }
                   className='disabled:opacity-50 disabled:cursor-not-allowed'

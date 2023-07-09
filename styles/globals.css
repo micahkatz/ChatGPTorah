@@ -7,3 +7,25 @@ button {
     all: unset;
     cursor: pointer;
 }
+
+.custom-loader {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%; 
+  color: #A855F7;
+  animation:
+    d7-1 .75s infinite linear alternate,
+    d7-2 1.5s  infinite linear; 
+}
+
+@keyframes d7-1 {
+  0%,
+  20% {box-shadow:30px 0 0 3px, 10px 0 0 3px, -10px 0 0 3px,-30px 0 0 3px}
+  60%,
+  100% {box-shadow:12px 0 0 3px, 14px 0 0 6px, -14px 0 0 6px,-12px 0 0 3px}
+}
+
+@keyframes d7-2 {
+  0%,25%   {transform: rotate(0)}
+  50%,100% {transform: rotate(.5turn)}
+}

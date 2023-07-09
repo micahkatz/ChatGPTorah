@@ -1,9 +1,7 @@
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
 import React, { Dispatch, SetStateAction } from 'react';
 import Parser from 'rss-parser';
-import { useQuery } from '@tanstack/react-query';
-import Image from 'next/image';
-import cheerio from 'cheerio';
-import Link from 'next/link';
 import Button from './Button';
 import RssItem from './RssItem';
 type CustomItem = { 'media:content': string };
@@ -13,7 +11,7 @@ const parser: Parser = new Parser();
 type Props = {
     feedUrl: string;
     queryKey: string;
-    setArticleUrl: Dispatch<SetStateAction<string>>
+    setRssArticle: Dispatch<SetStateAction<Parser.Item>>
 };
 
 const RssFeed = (props: Props) => {
@@ -24,10 +22,10 @@ const RssFeed = (props: Props) => {
     } = useQuery({ queryKey: [props.queryKey], queryFn: fetchArticlesRssFeed });
 
     const [page, setPage] = React.useState(0)
-    const [selectedArticle, setSelectedArticle] = React.useState<string>()
+    const [selectedArticle, setSelectedArticle] = React.useState<Parser.Item>()
 
     React.useEffect(() => {
-        props.setArticleUrl(selectedArticle)
+        props.setRssArticle(selectedArticle)
     }, [selectedArticle])
 
     async function fetchArticlesRssFeed() {
@@ -47,19 +45,6 @@ const RssFeed = (props: Props) => {
         return <span>There was an error fetching the feed</span>;
     }
 
-    const renderArticleImg = (innerHtml: string) => {
-        const $ = cheerio.load(innerHtml);
-
-        const imgSrc = $('img').attr('src');
-
-        return (
-            <img
-                src={imgSrc}
-                alt='image'
-                className='!h-[14rem] !w-[14rem] !m-0 !p-0 !rounded-md object-cover'
-            />
-        );
-    };
 
     const loadMoreArticles = () => setPage(prevPage => prevPage + 1);
     const PAGE_COUNT = 4
@@ -76,7 +61,6 @@ const RssFeed = (props: Props) => {
                         item={item}
                         setSelectedArticle={setSelectedArticle}
                         selectedArticle={selectedArticle}
-                        renderArticleImg={renderArticleImg}
                     />
                 ))}
             </div>
