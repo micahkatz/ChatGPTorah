@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import Parser from 'rss-parser';
 import { useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 import cheerio from 'cheerio';
 import Link from 'next/link';
+import Button from './Button';
 type CustomItem = { 'media:content': string };
 
 const parser: Parser<{}, CustomItem> = new Parser({
@@ -15,6 +16,7 @@ const parser: Parser<{}, CustomItem> = new Parser({
 type Props = {
     feedUrl: string;
     queryKey: string;
+    setArticleUrl: Dispatch<SetStateAction<string>>
 };
 
 const RssFeed = (props: Props) => {
@@ -26,6 +28,10 @@ const RssFeed = (props: Props) => {
 
     const [page, setPage] = React.useState(0)
     const [selectedArticle, setSelectedArticle] = React.useState<string>()
+
+    React.useEffect(() => {
+        props.setArticleUrl(selectedArticle)
+    }, [selectedArticle])
 
     async function fetchArticlesRssFeed() {
         const rssFeed = await parser.parseURL(
@@ -69,9 +75,9 @@ const RssFeed = (props: Props) => {
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4'>
                 {articleRssFeed?.items.slice(0, (page * PAGE_COUNT + PAGE_COUNT)).map((item) => (
                     <button
-                        className={`flex gap-4 items-center hover:scale-105 transition-all hover:bg-purple-200 hover:p-2 hover:rounded-md ${(selectedArticle === item.guid) ? 'border-purple-500 bg-purple-200 border-solid border-4 p-2 rounded-md' : ''}`}
+                        className={`flex gap-4 items-center hover:scale-105 transition-all hover:bg-purple-200 hover:p-2 hover:rounded-md ${(selectedArticle === item.link) ? 'border-purple-500 bg-purple-200 border-solid border-4 p-2 rounded-md' : ''}`}
                         key={`${item.guid}`}
-                        onClick={() => setSelectedArticle(item.guid)}
+                        onClick={() => (selectedArticle === item.link) ? setSelectedArticle(undefined) : setSelectedArticle(item.link)}
                     >
                         {/* <div className='rssFeedItem' dangerouslySetInnerHTML={{ __html: item.content }} /> */}
                         {renderArticleImg(item.content)}
@@ -88,10 +94,10 @@ const RssFeed = (props: Props) => {
                     </button>
                 ))}
             </div>
-            <button
+            <Button
                 onClick={loadMoreArticles}
                 disabled={(page * PAGE_COUNT + PAGE_COUNT) >= articleRssFeed?.items.length}
-                className='bg-purple-400 px-4 py-2 rounded-md text-white mb-2 hover:bg-purple-600 disabled:hidden'>Load More</button>
+                className='mb-2 bg-purple-100 hover:bg-purple-200 text-purple-500'>Load More</Button>
         </section>
     );
 };

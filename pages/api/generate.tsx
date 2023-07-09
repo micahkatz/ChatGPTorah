@@ -45,25 +45,35 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
-  const animal: string = req.body.animal || '';
-  if (animal.trim().length === 0) {
+  const articleUrl: string = req.body?.articleUrl || '';
+  var articleText: string = req.body?.articleText || '';
+  if (articleUrl && articleUrl?.trim().length === 0) {
     res.status(400).json({
       error: {
-        message: "Please enter a valid animal",
+        message: "Please enter a valid articleUrl",
+      }
+    });
+    return;
+  }
+  if (articleText && articleText?.trim().length === 0) {
+    res.status(400).json({
+      error: {
+        message: "Please enter a valid articleUrl",
       }
     });
     return;
   }
 
   try {
-
-    const articleHTML = await (await fetch(animal)).text()
-    const $ = cheerio.load(articleHTML);
-    const articleText = convertHtml($('article').html())
+    if (!articleText) {
+      const articleHTML = await (await fetch(articleUrl)).text()
+      const $ = cheerio.load(articleHTML);
+      articleText = convertHtml($('article').html())
+    }
 
     const { data: sefariaResponse }: { data: SefariaCalendarResponse } = await axios.get('http://www.sefaria.org/api/calendars')
     const torahPortion = sefariaResponse['calendar_items'][0].displayValue.en
-    console.log({ torahPortion })
+
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: generatePrompt({ articleText, torahPortion }) }],
