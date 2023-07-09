@@ -8,6 +8,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import axios, { AxiosResponse } from 'axios';
 import Parser from 'rss-parser';
 import RssItem from '../components/RssItem';
+import Link from 'next/link';
 export default function Home() {
   const [rssArticle, setRssArticle] = useState<Parser.Item>();
   const [customArticleUrl, setCustomArticleUrl] = useState('');
@@ -23,8 +24,8 @@ export default function Home() {
     AxiosResponse<GenerateResponse>
   > {
     return axios.post('/api/generate', {
-      articleUrl: customArticleUrl || rssArticle?.link,
-      articleText, // data: JSON.stringify({ articleUrl: customArticleUrl || rssArticleUrl, articleText }),
+      articleUrl: rssArticle?.link || customArticleUrl,
+      articleText,
     });
   }
   // ChatGPTorah
@@ -71,6 +72,16 @@ export default function Home() {
                     item={rssArticle}
                     notInteractive
                   />
+                )}
+                {articleText && (
+                  <>
+                    <textarea value={articleText} className='rounded-md border-solid border-2 border-purple-500 bg-purple-100 p-2 w-full' cols={8} />
+                  </>
+                )}
+                {customArticleUrl && (
+                  <div className='rounded-md border-solid bg-purple-100 p-2'>
+                    <Link className='text-purple-500 hover: underline' href={customArticleUrl} target='_blank'>{customArticleUrl}</Link>
+                  </div>
                 )}
                 <div className='mt-8'>
 

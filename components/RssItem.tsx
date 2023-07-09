@@ -1,6 +1,7 @@
 import React from 'react'
 import Parser from 'rss-parser'
 import cheerio from 'cheerio';
+import Link from 'next/link';
 
 type Props = {
     item: Parser.Item
@@ -33,10 +34,10 @@ const RssItem = (props: Props) => {
     const renderInnerContent = () => (
         <>
             {renderArticleImg(item.content)}
-            <div >
-                <p className='text-lg font-semibold mb-2'>
+            <div>
+                <Link className='text-lg font-semibold mb-2 hover:underline' href={props.item?.link} target='_blank'>
                     {item.title}
-                </p>
+                </Link>
                 <p>
                     {item.contentSnippet.length > 100
                         ? item.contentSnippet.slice(0, 100) + '...'
