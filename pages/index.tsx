@@ -38,7 +38,7 @@ export default function Home() {
         {generateInterpretationMutation.isIdle && (
           <span className='mb-4'>Select an article</span>
         )}
-        <div className='max-w-5xl flex flex-col items-center pb-10'>
+        <div className='max-w-5xl flex flex-col items-center pb-12'>
           {generateInterpretationMutation.isLoading && (
             <p>Loading...</p>
           )}

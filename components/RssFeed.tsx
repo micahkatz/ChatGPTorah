@@ -5,13 +5,10 @@ import Image from 'next/image';
 import cheerio from 'cheerio';
 import Link from 'next/link';
 import Button from './Button';
+import RssItem from './RssItem';
 type CustomItem = { 'media:content': string };
 
-const parser: Parser<{}, CustomItem> = new Parser({
-    customFields: {
-        item: ['media:content'],
-    },
-});
+const parser: Parser = new Parser();
 
 type Props = {
     feedUrl: string;
@@ -74,24 +71,13 @@ const RssFeed = (props: Props) => {
             </h3>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4'>
                 {articleRssFeed?.items.slice(0, (page * PAGE_COUNT + PAGE_COUNT)).map((item) => (
-                    <button
-                        className={`flex gap-4 items-center hover:scale-105 transition-all hover:bg-purple-100 hover:p-2 hover:rounded-md ${(selectedArticle === item.link) ? 'border-purple-500 bg-purple-200 border-solid border-4 p-2 rounded-md' : ''}`}
-                        key={`${item.guid}`}
-                        onClick={() => (selectedArticle === item.link) ? setSelectedArticle(undefined) : setSelectedArticle(item.link)}
-                    >
-                        {/* <div className='rssFeedItem' dangerouslySetInnerHTML={{ __html: item.content }} /> */}
-                        {renderArticleImg(item.content)}
-                        <div>
-                            <p className='text-lg font-semibold mb-2'>
-                                {item.title}
-                            </p>
-                            <p>
-                                {item.contentSnippet.length > 100
-                                    ? item.contentSnippet.slice(0, 100) + '...'
-                                    : item.contentSnippet}
-                            </p>
-                        </div>
-                    </button>
+                    <RssItem
+                        key={item.guid}
+                        item={item}
+                        setSelectedArticle={setSelectedArticle}
+                        selectedArticle={selectedArticle}
+                        renderArticleImg={renderArticleImg}
+                    />
                 ))}
             </div>
             <Button
