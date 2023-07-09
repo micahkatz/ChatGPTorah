@@ -53,7 +53,10 @@ export default function Home() {
               name="link"
               placeholder="Give a link to an article"
               value={customArticleUrl}
-              onChange={(e) => setCustomArticleUrl(e.target.value)}
+              onChange={(e) => {
+                setCustomArticleUrl(e.target.value)
+                setArticleText('')
+              }}
               className="mb-2 min-w-[20rem]"
             />
             <p className='mb-2 text-sm self-center'>OR</p>
@@ -61,7 +64,10 @@ export default function Home() {
               name="link"
               placeholder="Insert Text from Article"
               value={articleText}
-              onChange={(e) => setArticleText(e.target.value)}
+              onChange={(e) => {
+                setArticleText(e.target.value)
+                setCustomArticleUrl('')
+              }}
               cols={8}
               className="min-w-[20rem] border-solid border-2 border-purple-400 rounded-md px-2 py-1 mb-2"
             />
