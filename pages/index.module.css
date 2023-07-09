@@ -41,8 +41,3 @@
   text-align: center;
   cursor: pointer;
 }
-.main .result {
-  /* font-weight: bold; */
-  margin-top: 40px;
-  max-width: 75rem
-}

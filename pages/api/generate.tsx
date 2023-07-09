@@ -35,7 +35,7 @@ interface ExtraDetails {
   aliyot: string[];
 }
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
+export default async function (req: NextApiRequest, res: NextApiResponse<GenerateResponse>) {
   if (!configuration.apiKey) {
     res.status(500).json({
       error: {
@@ -80,9 +80,12 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       temperature: 0.6,
     });
     const result = completion.data.choices[0].message
+    // const result = {
+    //   content: 'Testing result\nNew paragraph\nTorah Portion is ' + torahPortion
+    // }
 
-    console.log({ result })
-    res.status(200).json({ result: result.content });
+    const { content } = result
+    res.status(200).json({ result: content });
   } catch (error) {
     // Consider adjusting the error handling logic for your use case
     if (error.response) {
