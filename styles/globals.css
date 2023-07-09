@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+button {
+    all: unset;
+    cursor: pointer;
+}

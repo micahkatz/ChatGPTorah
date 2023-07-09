@@ -25,6 +25,7 @@ const RssFeed = (props: Props) => {
     } = useQuery({ queryKey: [props.queryKey], queryFn: fetchArticlesRssFeed });
 
     const [page, setPage] = React.useState(0)
+    const [selectedArticle, setSelectedArticle] = React.useState<string>()
 
     async function fetchArticlesRssFeed() {
         const rssFeed = await parser.parseURL(
@@ -67,7 +68,11 @@ const RssFeed = (props: Props) => {
             </h3>
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4'>
                 {articleRssFeed?.items.slice(0, (page * PAGE_COUNT + PAGE_COUNT)).map((item) => (
-                    <div className='flex gap-4 items-center'>
+                    <button
+                        className={`flex gap-4 items-center hover:scale-105 transition-all hover:bg-purple-200 hover:p-2 hover:rounded-md ${(selectedArticle === item.guid) ? 'border-purple-500 bg-purple-200 border-solid border-4 p-2 rounded-md' : ''}`}
+                        key={`${item.guid}`}
+                        onClick={() => setSelectedArticle(item.guid)}
+                    >
                         {/* <div className='rssFeedItem' dangerouslySetInnerHTML={{ __html: item.content }} /> */}
                         {renderArticleImg(item.content)}
                         <div>
@@ -80,7 +85,7 @@ const RssFeed = (props: Props) => {
                                     : item.contentSnippet}
                             </p>
                         </div>
-                    </div>
+                    </button>
                 ))}
             </div>
             <button
