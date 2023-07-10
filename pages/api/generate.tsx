@@ -1,4 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
+
+import { kv } from '@vercel/kv';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { Configuration, OpenAIApi } from "openai";
 import { convert as convertHtml } from 'html-to-text'
 import cheerio from 'cheerio'
@@ -65,6 +67,13 @@ export default async function (req: NextApiRequest, res: NextApiResponse<Generat
   }
 
   try {
+    if (articleUrl) {
+      const matchingResponse = await kv.get(articleUrl);
+      if (matchingResponse && typeof matchingResponse === 'string') {
+        res.status(200).json({ result: matchingResponse });
+        return
+      }
+    }
     if (!articleText) {
       const articleHTML = await (await fetch(articleUrl)).text()
       const $ = cheerio.load(articleHTML);
@@ -80,14 +89,15 @@ export default async function (req: NextApiRequest, res: NextApiResponse<Generat
       temperature: 0.6,
     });
     const result = completion.data.choices[0].message
-    // const result = {
-    //   content: 'Testing result\nNew paragraph\nTorah Portion is ' + torahPortion
-    // }
+
 
     const { content } = result
+
+    const kvResult = await kv.set(articleUrl, content)
+    console.log({ kvResult })
+
     res.status(200).json({ result: content });
   } catch (error) {
-    // Consider adjusting the error handling logic for your use case
     if (error.response) {
       console.error(error.response.status, error.response.data);
       res.status(error.response.status).json(error.response.data);
