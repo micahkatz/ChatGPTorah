@@ -15,7 +15,7 @@ type Props = {
 
 const RssItem = (props: Props) => {
     const { item } = props
-
+    const WORDS_IN_DESC = 15
 
     const renderArticleImg = (innerHtml: string) => {
         const $ = cheerio.load(innerHtml);
@@ -26,7 +26,7 @@ const RssItem = (props: Props) => {
             <img
                 src={imgSrc}
                 alt='image'
-                className='!h-[14rem] !w-[14rem] !m-0 !p-0 !rounded-md object-cover'
+                className='h-[8rem] w-[8rem] md:h-[14rem] md:w-[14rem] !m-0 !p-0 !rounded-md object-cover'
             />
         );
     };
@@ -38,9 +38,9 @@ const RssItem = (props: Props) => {
                 <Link className='text-lg font-semibold mb-2 hover:underline' href={props.item?.link} target='_blank'>
                     {item.title}
                 </Link>
-                <p>
-                    {item.contentSnippet.length > 100
-                        ? item.contentSnippet.slice(0, 100) + '...'
+                <p className='max-sm:hidden'>
+                    {item.contentSnippet.split(' ').length > WORDS_IN_DESC
+                        ? item.contentSnippet.split(' ').slice(0, WORDS_IN_DESC).join(' ') + '...'
                         : item.contentSnippet}
                 </p>
             </div >

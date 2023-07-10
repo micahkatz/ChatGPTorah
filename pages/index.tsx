@@ -43,7 +43,7 @@ export default function Home() {
         )}
         <div className='max-w-5xl flex flex-col items-center pb-12'>
           {generateInterpretationMutation.isLoading && (
-            <div className="custom-loader mt-4"></div>
+            <div className="custom-loader mt-8"></div>
           )}
           {generateInterpretationMutation.isError && (
             <>

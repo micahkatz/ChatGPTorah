@@ -67,7 +67,7 @@ const RssFeed = (props: Props) => {
             <Button
                 onClick={loadMoreArticles}
                 disabled={(page * PAGE_COUNT + PAGE_COUNT) >= articleRssFeed?.items.length}
-                className='mb-2 bg-purple-100 hover:bg-purple-200 text-purple-500 disabled:hidden'>Load More</Button>
+                className='mb-2 !bg-purple-100 !hover:bg-purple-200 !text-purple-500 disabled:hidden'>Load More</Button>
         </section>
     );
 };
