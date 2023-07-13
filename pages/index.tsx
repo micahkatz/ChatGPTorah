@@ -33,7 +33,7 @@ export default function Home() {
     <div>
       <Head>
         <title>Chat GPTorah</title>
-        <link rel='icon' href='/dog.png' />
+        <link rel='icon' href='/favicon.png' />
       </Head>
 
       <main className={styles.main}>
